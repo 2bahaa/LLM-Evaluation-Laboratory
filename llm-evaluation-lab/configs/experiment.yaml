@@ -1,0 +1,32 @@
+# LLM Evaluation Laboratory - experiment definition.
+# Every model is run against every prompt template on every dataset.
+experiment_name: baseline_small_models
+output_dir: results
+seed: 42
+warmup: true          # one throw-away generation per model so load/compile time is not counted as latency
+max_examples: null    # set to an integer to run a quick subset
+device: null          # cuda | mps | cpu (auto-detected when null)
+
+models:
+  - name: qwen2.5-0.5b
+    hf_id: Qwen/Qwen2.5-0.5B-Instruct
+  - name: tinyllama-1.1b
+    hf_id: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+
+prompts:
+  - zero_shot
+  - concise
+  - few_shot
+
+datasets:
+  - name: general_knowledge
+    path: data/general_knowledge.jsonl
+  - name: science_basics
+    path: data/science_basics.jsonl
+
+generation:
+  max_new_tokens: 32
+  temperature: 0.0    # 0 = greedy decoding (deterministic)
+
+# Encoder used for the semantic-similarity metric. Set to null to skip it.
+semantic_model: sentence-transformers/all-MiniLM-L6-v2
